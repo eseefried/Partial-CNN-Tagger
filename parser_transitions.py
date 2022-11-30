@@ -93,6 +93,14 @@ def minibatch_parse(sentences, model, batch_size):
     dependencies = []
     partial_parses = [PartialParse(sentences[i]) for i in range(len(sentences))]
     unfinished_parses = partial_parses[:]
+    
+    while unfinished_parses:
+        minibatch = unfinished_parses[:batch_size]
+        transitions = model.predict(minibatch)
+        for i in range(len(minibatch)):
+            minibatch[i].parse_step(transitions[i])
+            unfinished_parses.pop(0)
+        
 
     ### YOUR CODE HERE (~8-10 Lines)
     ### TODO:
@@ -112,7 +120,7 @@ def minibatch_parse(sentences, model, batch_size):
 
     ### END YOUR CODE
 
-    return dependencies
+    return self.dependencies
 
 
 def test_step(name, transition, stack, buf, deps,
