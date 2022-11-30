@@ -91,6 +91,7 @@ def minibatch_parse(sentences, model, batch_size):
                                                      contain the parse for sentences[i]).
     """
     dependencies = []
+    
 
     ### YOUR CODE HERE (~8-10 Lines)
     ### TODO:
