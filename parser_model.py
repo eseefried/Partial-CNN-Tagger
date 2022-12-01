@@ -104,6 +104,7 @@ class ParserModel(nn.Module):
 
 
         ### END YOUR CODE
+        x = [self.embeddings[i] for i in w]
         return x
 
 
@@ -128,6 +129,7 @@ class ParserModel(nn.Module):
         """
         
         logits = None
+       
         ### YOUR CODE HERE (~3-5 lines)
         ### TODO:
         ###     Complete the forward computation as described in write-up.
