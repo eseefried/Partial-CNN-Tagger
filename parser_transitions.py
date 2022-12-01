@@ -102,10 +102,8 @@ def minibatch_parse(sentences, model, batch_size):
                 minibatch[i].parse_step(transitions[i])          
             minibatch = [parse for parse in minibatch if len(parse.stack) > 1 or len(parse.buffer) > 0]
         unfinished_parses = unfinished_parses[batch_size:]
-            
-    for i in range(len(sentences)):
-        dependencies.append(partial_parses[i].dependencies)
         
+    dependencies = [i.dependencies for i in partial_parses] 
     return dependencies
 
 
