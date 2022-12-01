@@ -93,34 +93,20 @@ def minibatch_parse(sentences, model, batch_size):
     dependencies = []
     partial_parses = [PartialParse(sentences[i]) for i in range(len(sentences))]
     unfinished_parses = partial_parses[:]
-    
+
     while unfinished_parses:
         minibatch = unfinished_parses[:batch_size]
-        transitions = model.predict(minibatch)
-        for i in range(len(minibatch)):
-            minibatch[i].parse_step(transitions[i])
-            unfinished_parses.pop(0)
+        while minibatch:
+            transitions = model.predict(minibatch)
+            for i in range(len(minibatch)):
+                minibatch[i].parse_step(transitions[i])          
+            minibatch = [parse for parse in minibatch if len(parse.stack) > 1 or len(parse.buffer) > 0]
+        unfinished_parses = unfinished_parses[batch_size:]
+            
+    for i in range(len(sentences)):
+        dependencies.append(partial_parses[i].dependencies)
         
-
-    ### YOUR CODE HERE (~8-10 Lines)
-    ### TODO:
-    ###     Implement the minibatch parse algorithm as described in the pdf handout
-    ###
-    ###     Note: A shallow copy (as denoted in the PDF) can be made with the "=" sign in python, e.g.
-    ###                 unfinished_parses = partial_parses[:].
-    ###             Here `unfinished_parses` is a shallow copy of `partial_parses`.
-    ###             In Python, a shallow copied list like `unfinished_parses` does not contain new instances
-    ###             of the object stored in `partial_parses`. Rather both lists refer to the same objects.
-    ###             In our case, `partial_parses` contains a list of partial parses. `unfinished_parses`
-    ###             contains references to the same objects. Thus, you should NOT use the `del` operator
-    ###             to remove objects from the `unfinished_parses` list. This will free the underlying memory that
-    ###             is being accessed by `partial_parses` and may cause your code to crash.
-
-
-
-    ### END YOUR CODE
-
-    return self.dependencies
+    return dependencies
 
 
 def test_step(name, transition, stack, buf, deps,
