@@ -57,8 +57,9 @@ def train(parser, train_data, dev_data, output_path, batch_size=1024, n_epochs=1
     ### Please see the following docs for support:
     ###     Adam Optimizer: https://pytorch.org/docs/stable/optim.html
     ###     Cross Entropy Loss: https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html#torch.nn.CrossEntropyLoss
-
-
+    optimizer = optim.Adam(parser.model.parameters(), lr)#[parser.model.parameters(), var2], lr)
+    loss_func = torch.nn.CrossEntropyLoss(weight=None, size_average=None, ignore_index=- 100, reduce=None, reduction='mean', label_smoothing=0.0)
+    
 
     ### END YOUR CODE
 
@@ -101,12 +102,16 @@ def train_for_epoch(parser, train_data, dev_data, optimizer, loss_func, batch_si
         ### YOUR CODE HERE (~4 Lines)
         ### TODO:
         ###      1) Run train_x forward through model to produce `logits`
+        logits = parser.model.forward(train_x.long())
         ###      2) Use the `loss_func` parameter to apply the PyTorch CrossEntropyLoss function.
         ###         This will take `logits` and `train_y` as inputs. It will output the CrossEntropyLoss
         ###         between softmax(`logits`) and `train_y`. Remember that softmax(`logits`)
         ###         are the predictions (y^ from the PDF).
+        loss = loss_func(logits, train_y)
         ###      3) Backprop losses
+        loss.backward()
         ###      4) Take step with the optimizer
+        optimizer.step()
         ### Please see the following docs for support and examples:
         ###     Optimizer Step: https://pytorch.org/docs/stable/optim.html#optimizer-step
 

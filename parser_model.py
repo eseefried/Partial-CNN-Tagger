@@ -104,7 +104,8 @@ class ParserModel(nn.Module):
 
 
         ### END YOUR CODE
-        x = [self.embeddings[i] for i in w]
+        x = torch.stack([self.embeddings[i] for i in w])
+        x = x.reshape([len(w), self.n_features * self.embed_size])
         return x
 
 
@@ -145,7 +146,10 @@ class ParserModel(nn.Module):
         ### 2. Calculate the product of the embedding vector and the input weights
         ### 3. Apply ReLU activation to this
         ### 4. Multiply this by the hidden layer weights to get logits
-
+        emb = F.pad(self.embedding_lookup(w), (0,1,0,0), "constant", 1)
+        x = torch.relu(torch.matmul(emb, self.embed_to_hidden_weight))
+        x = F.pad(x, (0,1,0,0),"constant", 1)
+        logits = torch.matmul(x, self.hidden_to_logits_weight)
         ### END YOUR CODE
         return logits
         
